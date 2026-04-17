@@ -1,0 +1,103 @@
+{
+  "score": 28.0,
+  "max_points": 64.0,
+  "percent": 43.75,
+  "per_question": {
+    "Q1": {
+      "earned": 0.0,
+      "max": 3
+    },
+    "Q2": {
+      "earned": 1.0,
+      "max": 3
+    },
+    "Q3": {
+      "earned": 0.0,
+      "max": 3
+    },
+    "Q4": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q5": {
+      "earned": 2.0,
+      "max": 3
+    },
+    "Q6": {
+      "earned": 3.0,
+      "max": 3.0
+    },
+    "Q7": {
+      "earned": 2.0,
+      "max": 3
+    },
+    "Q8": {
+      "earned": 1.0,
+      "max": 3
+    },
+    "Q9": {
+      "earned": 2.0,
+      "max": 3.0
+    },
+    "Q10": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q11": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q12": {
+      "earned": 0.0,
+      "max": 2.0
+    },
+    "Q13": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q14": {
+      "earned": 3.0,
+      "max": 3.0
+    },
+    "Q15": {
+      "earned": 0.0,
+      "max": 2.0
+    },
+    "Q16": {
+      "earned": 0.0,
+      "max": 2.0
+    },
+    "Q17": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q18": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q19": {
+      "earned": 2.0,
+      "max": 2.0
+    },
+    "Q20": {
+      "earned": 0.0,
+      "max": 5.0
+    },
+    "Q21": {
+      "earned": 0.0,
+      "max": 3.0
+    },
+    "Q22": {
+      "earned": 0.0,
+      "max": 3.0
+    },
+    "Q23": {
+      "earned": 0.0,
+      "max": 3.0
+    },
+    "Q24": {
+      "earned": 0.0,
+      "max": 3.0
+    }
+  }
+}

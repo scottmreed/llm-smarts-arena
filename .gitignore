@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# Environment variables
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Output files that might be generated during runs
+*.log
+*.tmp
+
+# Private benchmark assets, raw traces, and local review helpers
+.benchmark_private/
+AGENTS.md
+CLAUDE.md
+CURSOR_AGENTS.md
+LOCAL_BRANCH_FLOW.md
+
+# Public runs keep only shareable summaries
+outputs/**/model_response*_raw.txt
+outputs/**/model_response*_trace.json
+outputs/**/model_submission_final.json
+outputs/**/usage*.json
+outputs/**/struggle_report.json
+outputs/**/trusted_*.json
+outputs/**/diagnostic_report.json
+outputs/*.tmp

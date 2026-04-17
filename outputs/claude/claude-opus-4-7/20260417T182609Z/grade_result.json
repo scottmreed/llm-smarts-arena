@@ -1,0 +1,611 @@
+{
+  "score": 42.0,
+  "max_points": 64.0,
+  "percent": 65.62,
+  "per_question": {
+    "Q1": {
+      "earned": 0.0,
+      "max": 3,
+      "detail": {
+        "heavy_atoms": {
+          "expected": 168,
+          "got": 162,
+          "ok": false,
+          "weight": 1
+        },
+        "total_atoms_with_H": {
+          "expected": 394,
+          "got": 380,
+          "ok": false,
+          "weight": 1
+        },
+        "rotatable_bonds": {
+          "expected": 165,
+          "got": 159,
+          "ok": false,
+          "weight": 1
+        }
+      }
+    },
+    "Q2": {
+      "earned": 3.0,
+      "max": 3,
+      "detail": {
+        "heavy_atoms": {
+          "expected": 56,
+          "got": 56,
+          "ok": true,
+          "weight": 1
+        },
+        "aromatic_rings": {
+          "expected": 7,
+          "got": 7,
+          "ok": true,
+          "weight": 1
+        },
+        "rotatable_bonds": {
+          "expected": 19,
+          "got": 19,
+          "ok": true,
+          "weight": 1
+        }
+      }
+    },
+    "Q3": {
+      "earned": 2.0,
+      "max": 3,
+      "detail": {
+        "heavy_atoms": {
+          "expected": 40,
+          "got": 40,
+          "ok": true,
+          "weight": 1
+        },
+        "h_bond_donors": {
+          "expected": 20,
+          "got": 22,
+          "ok": false,
+          "weight": 1
+        },
+        "h_bond_acceptors": {
+          "expected": 20,
+          "got": 20,
+          "ok": true,
+          "weight": 1
+        }
+      }
+    },
+    "Q4": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "expected": 2,
+        "got": 2,
+        "ok": true
+      }
+    },
+    "Q5": {
+      "earned": 3.0,
+      "max": 3,
+      "detail": {
+        "ring_count": {
+          "expected": 7,
+          "got": 7,
+          "ok": true,
+          "weight": 1
+        },
+        "heavy_atoms": {
+          "expected": 24,
+          "got": 24,
+          "ok": true,
+          "weight": 1
+        },
+        "molecular_formula": {
+          "expected": "C24H12",
+          "got": "C24H12",
+          "ok": true,
+          "weight": 1
+        }
+      }
+    },
+    "Q6": {
+      "earned": 3.0,
+      "max": 3.0,
+      "detail": {
+        "ring_count": {
+          "ok": true,
+          "expected": 2,
+          "got": 2
+        },
+        "reagent": {
+          "ok": true,
+          "allowed_canons": [
+            "OCCO"
+          ],
+          "got_canon": "OCCO"
+        },
+        "functional_group": {
+          "ok": true,
+          "expected_any_of": [
+            "acetal",
+            "ketal"
+          ],
+          "got": "ketal"
+        }
+      }
+    },
+    "Q7": {
+      "earned": 2.0,
+      "max": 3,
+      "detail": {
+        "heavy_atoms": {
+          "expected": 8,
+          "got": 8,
+          "ok": true,
+          "weight": 1
+        },
+        "ring_count": {
+          "expected": 6,
+          "got": 5,
+          "ok": false,
+          "weight": 1
+        },
+        "unique_carbons": {
+          "expected": 1,
+          "got": 1,
+          "ok": true,
+          "weight": 1
+        }
+      }
+    },
+    "Q8": {
+      "earned": 2.0,
+      "max": 3,
+      "detail": {
+        "heavy_atoms": {
+          "expected": 20,
+          "got": 20,
+          "ok": true,
+          "weight": 1
+        },
+        "aromatic_rings": {
+          "expected": 3,
+          "got": 3,
+          "ok": true,
+          "weight": 1
+        },
+        "ring_count": {
+          "expected": 6,
+          "got": 4,
+          "ok": false,
+          "weight": 1
+        }
+      }
+    },
+    "Q9": {
+      "earned": 1.0,
+      "max": 3.0,
+      "detail": {
+        "heavy_atoms": {
+          "ok": false,
+          "expected": 18,
+          "got": 19
+        },
+        "sp_carbons": {
+          "ok": true,
+          "expected": 2,
+          "got": 2
+        },
+        "tautomer": {
+          "ok": false,
+          "expected_canon": "CCCC(=O)c1ccc(-c2ccc(O)cc2)cc1",
+          "got_canon": "CCCCC(=O)c1ccc(-c2ccc(O)cc2)cc1"
+        }
+      }
+    },
+    "Q10": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "ok": true,
+        "allowed_canons": [
+          "CCc1ccccc1"
+        ],
+        "got_canon": "CCc1ccccc1"
+      }
+    },
+    "Q11": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "ok": true,
+        "expected": [
+          "CCOC(C)=O",
+          "O"
+        ],
+        "got_sorted": [
+          "CCOC(C)=O",
+          "O"
+        ]
+      }
+    },
+    "Q12": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "ok": true,
+        "expected": [
+          "CCCCN",
+          "[Cl-]"
+        ],
+        "got_sorted": [
+          "CCCCN",
+          "[Cl-]"
+        ]
+      }
+    },
+    "Q13": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "ok": true,
+        "allowed_canons": [
+          "C=C(C)C(=O)OC"
+        ],
+        "got_canon": "C=C(C)C(=O)OC"
+      }
+    },
+    "Q14": {
+      "earned": 3.0,
+      "max": 3.0,
+      "detail": {
+        "monomer": {
+          "ok": true,
+          "allowed_canons": [
+            "C=Cc1ccncc1"
+          ],
+          "got_canon": "C=Cc1ccncc1"
+        },
+        "aromatic_rings": {
+          "ok": true,
+          "expected": 4,
+          "got": 4
+        }
+      }
+    },
+    "Q15": {
+      "earned": 0.0,
+      "max": 2.0,
+      "detail": {
+        "expected": 0,
+        "got": 2,
+        "ok": false
+      }
+    },
+    "Q16": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "expected": 4,
+        "got": 4,
+        "ok": true
+      }
+    },
+    "Q17": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "fixed_smiles": {
+          "ok": true,
+          "got": "CCOC(=O)c1ccccc1",
+          "expected_canon": "CCOC(=O)c1ccccc1"
+        },
+        "canonical_smiles": {
+          "ok": true,
+          "got": "CCOC(=O)c1ccccc1",
+          "expected_canon": "CCOC(=O)c1ccccc1"
+        }
+      }
+    },
+    "Q18": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "fixed_smiles": {
+          "ok": true,
+          "got": "CCCCCCCCCCCC",
+          "expected_canon": "CCCCCCCCCCCC"
+        },
+        "canonical_smiles": {
+          "ok": true,
+          "got": "CCCCCCCCCCCC",
+          "expected_canon": "CCCCCCCCCCCC"
+        }
+      }
+    },
+    "Q19": {
+      "earned": 2.0,
+      "max": 2.0,
+      "detail": {
+        "fixed_smiles": {
+          "ok": true,
+          "got": "CC(=O)N",
+          "expected_canon": "CC(N)=O"
+        },
+        "canonical_smiles": {
+          "ok": true,
+          "got": "CC(N)=O",
+          "expected_canon": "CC(N)=O"
+        }
+      }
+    },
+    "Q20": {
+      "earned": 5.0,
+      "max": 5.0,
+      "detail": {
+        "got_smiles": "CCCCCCCc1ccccc1-c1ccccc1-c1ccccc1CCCc1ccoc1CCCc1ccsc1CCCc1ccccn1",
+        "all_constraints_ok": true,
+        "per_check": {
+          "parseable": {
+            "ok": true,
+            "raw": true
+          },
+          "heavy_atoms": {
+            "ok": true,
+            "raw": {
+              "expected": 50,
+              "got": 50,
+              "ok": true
+            }
+          },
+          "rings": {
+            "ok": true,
+            "raw": {
+              "expected": 6,
+              "got": 6,
+              "ok": true
+            }
+          },
+          "no_halogens": {
+            "ok": true,
+            "raw": {
+              "ok": true,
+              "got_halogens": false
+            }
+          },
+          "distinct_heteroatom_elements": {
+            "ok": true,
+            "raw": {
+              "expected": 3,
+              "got_elements": [
+                "N",
+                "O",
+                "S"
+              ],
+              "got_count": 3,
+              "ok": true
+            }
+          },
+          "no_ring_with_mixed_heteroatoms": {
+            "ok": true,
+            "raw": {
+              "ok": true,
+              "ring_heteroatom_sets": [
+                [],
+                [],
+                [],
+                [
+                  "O"
+                ],
+                [
+                  "S"
+                ],
+                [
+                  "N"
+                ]
+              ]
+            }
+          },
+          "neutral": {
+            "ok": true,
+            "raw": {
+              "ok": true,
+              "formal_charge": 0
+            }
+          },
+          "single_connected": {
+            "ok": true,
+            "raw": {
+              "ok": true,
+              "fragment_count": 1
+            }
+          }
+        }
+      }
+    },
+    "Q21": {
+      "earned": 0.0,
+      "max": 3.0,
+      "detail": {
+        "checks": {
+          "parseable": true,
+          "heavy_atoms": {
+            "expected": 34,
+            "got": 24,
+            "ok": false
+          },
+          "rings": {
+            "expected": 7,
+            "got": 5,
+            "ok": false
+          },
+          "ring_sizes": {
+            "expected": {
+              "6": 5,
+              "5": 2
+            },
+            "got": {
+              "6": 3,
+              "5": 2
+            },
+            "ok": false
+          },
+          "aromatic_atoms": {
+            "expected": 34,
+            "got": 24,
+            "ok": false
+          },
+          "hetero_counts": {
+            "expected": {
+              "N": 3,
+              "O": 1,
+              "S": 1
+            },
+            "got": {
+              "N": 4,
+              "O": 0,
+              "S": 1
+            },
+            "ok": false
+          },
+          "fused_pairs": {
+            "expected": 3,
+            "got": 2,
+            "ok": false
+          },
+          "atoms_in_at_least_2_rings": {
+            "expected": 6,
+            "got": 4,
+            "ok": false
+          },
+          "neutral": {
+            "ok": true,
+            "formal_charge": 0
+          },
+          "no_isotopes": {
+            "ok": true,
+            "has_isotopes": false
+          },
+          "no_charges": {
+            "ok": true,
+            "has_charges": false
+          },
+          "no_halogens": {
+            "ok": true,
+            "has_halogens": false
+          },
+          "single_connected": {
+            "ok": true,
+            "fragment_count": 1
+          }
+        }
+      }
+    },
+    "Q22": {
+      "earned": 0.0,
+      "max": 3.0,
+      "detail": {
+        "checks": {
+          "parseable": false
+        }
+      }
+    },
+    "Q23": {
+      "earned": 0.0,
+      "max": 3.0,
+      "detail": {
+        "checks": {
+          "parseable": false
+        }
+      }
+    },
+    "Q24": {
+      "earned": 0.0,
+      "max": 3.0,
+      "detail": {
+        "checks": {
+          "parseable": true,
+          "heavy_atoms": {
+            "expected": 25,
+            "got": 19,
+            "ok": false
+          },
+          "rings": {
+            "expected": 5,
+            "got": 4,
+            "ok": false
+          },
+          "ring_sizes": {
+            "expected": {
+              "6": 4,
+              "5": 1
+            },
+            "got": {
+              "6": 3,
+              "5": 1
+            },
+            "ok": false
+          },
+          "aromatic_atoms": {
+            "expected": 25,
+            "got": 19,
+            "ok": false
+          },
+          "hetero_counts": {
+            "expected": {
+              "N": 2,
+              "O": 1,
+              "S": 0
+            },
+            "got": {
+              "N": 3,
+              "O": 1,
+              "S": 0
+            },
+            "ok": false
+          },
+          "hbd": {
+            "expected": 0,
+            "got": 0,
+            "ok": true
+          },
+          "hba": {
+            "expected": 3,
+            "got": 4,
+            "ok": false
+          },
+          "fused_pairs": {
+            "expected": 2,
+            "got": 2,
+            "ok": true
+          },
+          "rotatable_bonds": {
+            "expected": 2,
+            "got": 1,
+            "ok": false
+          },
+          "neutral": {
+            "ok": true,
+            "formal_charge": 0
+          },
+          "no_isotopes": {
+            "ok": true,
+            "has_isotopes": false
+          },
+          "no_charges": {
+            "ok": true,
+            "has_charges": false
+          },
+          "no_halogens": {
+            "ok": true,
+            "has_halogens": false
+          },
+          "single_connected": {
+            "ok": true,
+            "fragment_count": 1
+          }
+        }
+      }
+    }
+  }
+}
