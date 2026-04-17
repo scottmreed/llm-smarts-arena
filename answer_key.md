@@ -2,17 +2,15 @@
 
 Generated for benchmark version `1.1.0`.
 
-Trusted scoring material is withheld from the public repository.
-The public key only documents answer shapes plus unscored diagnostic reference entries.
-
 ## Long Chains
 
 ### Q1
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "heavy_atoms": 168,
+  "total_atoms_with_H": 394,
+  "rotatable_bonds": 165
 }
 ```
 
@@ -20,8 +18,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "heavy_atoms": 56,
+  "aromatic_rings": 7,
+  "rotatable_bonds": 19
 }
 ```
 
@@ -29,8 +28,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "heavy_atoms": 40,
+  "h_bond_donors": 20,
+  "h_bond_acceptors": 20
 }
 ```
 
@@ -38,8 +38,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "match_count": 2
 }
 ```
 
@@ -49,8 +48,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "ring_count": 7,
+  "heavy_atoms": 24,
+  "molecular_formula": "C24H12"
 }
 ```
 
@@ -58,8 +58,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "ring_count": 2,
+  "reagent_smiles": "OCCO",
+  "functional_group": "ketal"
 }
 ```
 
@@ -67,8 +68,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "heavy_atoms": 8,
+  "ring_count": 6,
+  "unique_carbons": 1
 }
 ```
 
@@ -76,8 +78,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "heavy_atoms": 22,
+  "aromatic_rings": 4,
+  "ring_count": 5
 }
 ```
 
@@ -85,8 +88,9 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "heavy_atoms": 17,
+  "sp_carbons": 2,
+  "tautomer_smiles": "O=C(CCC)c1ccc(-c2ccc(O)cc2)cc1"
 }
 ```
 
@@ -96,8 +100,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "product_smiles": "CCc1ccccc1"
 }
 ```
 
@@ -105,8 +108,10 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "products": [
+    "CCOC(C)=O",
+    "O"
+  ]
 }
 ```
 
@@ -114,8 +119,10 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "products": [
+    "CCCCN",
+    "[Cl-]"
+  ]
 }
 ```
 
@@ -125,8 +132,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "monomer_smiles": "COC(=O)C(=C)C"
 }
 ```
 
@@ -134,8 +140,8 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "monomer_smiles": "C=Cc1ccncc1",
+  "aromatic_rings": 4
 }
 ```
 
@@ -145,8 +151,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "match_count": 2
 }
 ```
 
@@ -154,8 +159,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "match_count": 4
 }
 ```
 
@@ -165,8 +169,8 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "fixed_smiles": "CCOC(=O)c1ccccc1",
+  "canonical_smiles": "CCOC(=O)c1ccccc1"
 }
 ```
 
@@ -174,8 +178,8 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "fixed_smiles": "CCCCCCCCCCCC",
+  "canonical_smiles": "CCCCCCCCCCCC"
 }
 ```
 
@@ -183,8 +187,8 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "fixed_smiles": "CC(=O)N",
+  "canonical_smiles": "CC(=O)N"
 }
 ```
 
@@ -194,8 +198,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "smiles": "CCCCCCCCCCCc1cccc(Cc2ccccc2Cc3ccccc3Cc4ccncc4Cc5ccoc5Cc6ccsc6)c1"
 }
 ```
 
@@ -205,8 +208,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "smiles": "c1ccc2c(c1)c3ccc(cc3c2S)Nc4ccc(cc4)O"
 }
 ```
 
@@ -214,8 +216,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "smiles": "c1ccc2c(c1)c3ccc(cc3c2S)Nc4ccc(cc4Nc5ccc(cc5)O)O"
 }
 ```
 
@@ -223,8 +224,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "smiles": "c1ccc2c(c1)c3ccc(cc3c2N)Nc4ccc(cc4)O"
 }
 ```
 
@@ -232,8 +232,7 @@ The public key only documents answer shapes plus unscored diagnostic reference e
 
 ```json
 {
-  "public_note": "Trusted scoring material is withheld from the public repository.",
-  "status": "trusted answer withheld"
+  "smiles": "c1ccc2c(c1)c3ccc(cc3c2N)O"
 }
 ```
 
