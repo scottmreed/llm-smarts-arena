@@ -31,11 +31,13 @@ ACCENT = "#7C3AED"
 
 # Green heatmap palette - consistent across all families
 PALETTES = {
-    "claude": ["#2E7D32", "#43A047", "#66BB6A", "#81C784"],  # Green shades
-    "openai": ["#1B5E20", "#2E7D32", "#43A047", "#66BB6A"],  # Green shades
+    "claude":     ["#1B5E20", "#2E7D32", "#43A047", "#66BB6A"],
+    "openai":     ["#1B5E20", "#2E7D32", "#43A047", "#66BB6A"],
+    "google":     ["#1B5E20", "#2E7D32", "#43A047", "#66BB6A"],
+    "openrouter": ["#1B5E20", "#2E7D32", "#43A047", "#66BB6A"],
 }
 
-FAMILY_ORDER = ["claude", "openai"]
+FAMILY_ORDER = ["claude", "openai", "google", "openrouter"]
 
 FONT_REGULAR = "/System/Library/Fonts/Supplemental/Arial.ttf"
 FONT_SERIF = "/System/Library/Fonts/Supplemental/Georgia.ttf"
@@ -46,6 +48,7 @@ class RunResult:
     label: str
     model: str
     family: str
+    brand_family: str
     provider: str
     percent: float
     benchmark_version: str
@@ -81,7 +84,18 @@ def _infer_family(run_dir: Path, model_name: str) -> str:
         return "claude"
     if model_name.lower().startswith("gpt"):
         return "openai"
+    if model_name.lower().startswith("gemini"):
+        return "google"
+    if "/" in model_name:
+        return "openrouter"
     return family
+
+
+def _infer_brand_family(model_name: str, fallback_family: str) -> str:
+    model = model_name.lower()
+    if model.startswith("gemini") or "gemma" in model:
+        return "google"
+    return fallback_family
 
 
 def _pretty_model_label(model_name: str) -> str:
@@ -92,6 +106,9 @@ def _pretty_model_label(model_name: str) -> str:
         "gpt-5.4": "GPT-5.4",
         "gpt-5.4-nano": "GPT-5.4 nano",
         "gpt-5-4-nano": "GPT-5.4 nano",
+        "gemini-3.1-pro-preview": "Gemini 3.1 Pro",
+        "google/gemma-4-31b-it:free": "Gemma 4 31B",
+        "google-gemma-4-31b-it-free": "Gemma 4 31B",
     }
     if model_name in aliases:
         return aliases[model_name]
@@ -122,6 +139,7 @@ def load_run(path_str: str, label_override: str | None) -> RunResult:
     meta = _load_json(meta_path) if meta_path.exists() else {}
     model_name = meta.get("model") or run_dir.parent.name
     family = _infer_family(run_dir, model_name)
+    brand_family = _infer_brand_family(model_name, family)
     provider = FAMILY_DISPLAY_NAMES.get(family, family.title())
     version = meta.get("benchmark_version", BENCHMARK_VERSION)
     label = label_override or _pretty_model_label(model_name)
@@ -130,6 +148,7 @@ def load_run(path_str: str, label_override: str | None) -> RunResult:
         label=label,
         model=model_name,
         family=family,
+        brand_family=brand_family,
         provider=provider,
         percent=core_percent,
         benchmark_version=version,
@@ -152,7 +171,7 @@ def _family_rank(family: str) -> tuple[int, str]:
 
 
 def _bar_color(run: RunResult, index_within_family: int) -> str:
-    palette = PALETTES.get(run.family, ["#5B6CFF"])
+    palette = PALETTES.get(run.brand_family, ["#1B5E20"])
     return palette[index_within_family % len(palette)]
 
 
@@ -222,6 +241,8 @@ def _load_logo(family: str, size: int) -> Image.Image | None:
         logo_path = _ASSETS_DIR / "claude-logo.png"
     elif family == "openai":
         logo_path = _ASSETS_DIR / "openai-new-logo.png"
+    elif family == "google":
+        logo_path = _ASSETS_DIR / "google-gemini-logo.png"
     else:
         return None
 
@@ -387,7 +408,7 @@ def plot_overall(runs: list[RunResult], output_path: Path) -> None:
         bar_box = (x_center - bar_width // 2, bottom - height_px, x_center + bar_width // 2, bottom)
         draw.rounded_rectangle(bar_box, radius=18, fill=color)
         _draw_value(draw, bar_box, run.percent, color)
-        _draw_provider_logo(image, draw, run.family, (x_center, bottom + 68), 56)
+        _draw_provider_logo(image, draw, run.brand_family, (x_center, bottom + 68), 56)
         label = run.label
         _draw_rotated_label(image, label, anchor=(x_center - 40, bottom + 105))
 
@@ -432,7 +453,7 @@ def plot_categories(runs: list[RunResult], output_path: Path) -> None:
         y0 = table_top + row_idx * row_height
         y1 = y0 + row_height - 14
         draw.rounded_rectangle((table_left, y0, box[2] - 36, y1), radius=22, fill="#FBFAF7", outline="#EEE7DD")
-        _draw_provider_logo(image, draw, run.family, (table_left + 40, (y0 + y1) // 2), 42)
+        _draw_provider_logo(image, draw, run.brand_family, (table_left + 40, (y0 + y1) // 2), 42)
         draw.text((table_left + 80, y0 + 22), run.label, fill=TEXT, font=_load_font(26))
         draw.text((table_left + 80, y0 + 50), run.provider, fill=MUTED, font=_load_font(19))
         family_index = family_seen.get(run.family, 0)

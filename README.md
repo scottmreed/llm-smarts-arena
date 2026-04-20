@@ -24,6 +24,7 @@ llm-smarts-arena/
 ├── benchmark_runner_utils.py           # JSON parsing, artifact routing, secret-loader helpers
 ├── run_smiles_benchmark_claude.py      # Anthropic runner
 ├── run_smiles_benchmark_openai.py      # OpenAI runner
+├── run_smiles_benchmark_google.py      # Google runner
 ├── compare_benchmark_results.py        # Shareable PNG figure renderer
 ├── generate_answer_key.py              # Rebuilds the public answer-key document
 ├── answer_key.md                       # Public human-readable key
@@ -45,7 +46,7 @@ pip install -r requirements.txt
 
 ```bash
 cp .env.example .env
-# Add ANTHROPIC_API_KEY and/or OPENAI_API_KEY
+# Add ANTHROPIC_API_KEY, OPENAI_API_KEY, and/or GOOGLE_API_KEY
 ```
 
 ### Run Benchmark
@@ -73,6 +74,10 @@ python run_smiles_benchmark_claude.py --model claude-sonnet-4-6
 
 # OpenAI
 python run_smiles_benchmark_openai.py --model gpt-5.4-nano
+python run_smiles_benchmark_openai.py --model gpt-5.4-mini
+
+# Google
+python run_smiles_benchmark_google.py --model gemini-3.1-pro-preview
 ```
 
 Each run writes public artifacts under `outputs/<family>/<model>/<timestamp>/`:
@@ -108,6 +113,7 @@ Benchmark results are visualized as PNG charts in the `figures/` directory. All 
 
 - [Claude family results](figures/claude/)
 - [OpenAI family results](figures/openai/)
+- [Google family results](figures/google/)
 
 ### Rebuild Figures
 
@@ -116,21 +122,34 @@ After adding new benchmark results, regenerate all graphs:
 ```bash
 # Regenerate all family-specific and combined graphs
 python compare_benchmark_results.py \
+  outputs/claude/claude-opus-4-7/20260417T182609Z \
   outputs/claude/claude-sonnet-4-6/20260417T155306Z \
   outputs/claude/claude-haiku-4-5/20260417T155307Z \
+  outputs/openai/gpt-5.4/20260417T182903Z \
+  outputs/openai/gpt-5-4-mini/20260420T152035Z \
   outputs/openai/gpt-5-4-nano/20260417T155307Z \
+  outputs/google/gemini-3-1-pro-preview/20260420T111859Z \
+  outputs/openrouter/google-gemma-4-31b-it-free/20260420T123900Z \
   --output-prefix figures/combined/benchmark_percentages
 
 # Family-specific (Claude)
 python compare_benchmark_results.py \
+  outputs/claude/claude-opus-4-7/20260417T182609Z \
   outputs/claude/claude-sonnet-4-6/20260417T155306Z \
   outputs/claude/claude-haiku-4-5/20260417T155307Z \
   --output-prefix figures/claude/benchmark_percentages
 
 # Family-specific (OpenAI)
 python compare_benchmark_results.py \
+  outputs/openai/gpt-5.4/20260417T182903Z \
+  outputs/openai/gpt-5-4-mini/20260420T152035Z \
   outputs/openai/gpt-5-4-nano/20260417T155307Z \
   --output-prefix figures/openai/benchmark_percentages
+
+# Family-specific (Google)
+python compare_benchmark_results.py \
+  outputs/google/gemini-3-1-pro-preview/20260420T111859Z \
+  --output-prefix figures/google/benchmark_percentages
 ```
 
 ## Answer Key

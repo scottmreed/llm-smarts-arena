@@ -59,6 +59,8 @@ QUESTION_CATEGORIES = {
 FAMILY_DISPLAY_NAMES = {
     "claude": "Anthropic",
     "openai": "OpenAI",
+    "google": "Google",
+    "openrouter": "OpenRouter",
 }
 
 

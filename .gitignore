@@ -56,6 +56,7 @@ CURSOR_AGENTS.md
 LOCAL_BRANCH_FLOW.md
 
 # Public runs keep only shareable summaries
+outputs/
 outputs/**/model_response*_raw.txt
 outputs/**/model_response*_trace.json
 outputs/**/model_submission_final.json
@@ -64,3 +65,7 @@ outputs/**/struggle_report.json
 outputs/**/trusted_*.json
 outputs/**/diagnostic_report.json
 outputs/*.tmp
+
+blog
+docs
+docs/superpowers/plans/**
