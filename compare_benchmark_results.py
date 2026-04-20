@@ -140,7 +140,8 @@ def load_run(path_str: str, label_override: str | None) -> RunResult:
     model_name = meta.get("model") or run_dir.parent.name
     family = _infer_family(run_dir, model_name)
     brand_family = _infer_brand_family(model_name, family)
-    provider = FAMILY_DISPLAY_NAMES.get(family, family.title())
+    # Use brand_family for provider display when model is from a different origin (e.g., Gemma via OpenRouter shows as Google)
+    provider = FAMILY_DISPLAY_NAMES.get(brand_family, brand_family.title())
     version = meta.get("benchmark_version", BENCHMARK_VERSION)
     label = label_override or _pretty_model_label(model_name)
     core_percent = percent_for_questions(grade["per_question"], CORE_QUESTION_IDS)

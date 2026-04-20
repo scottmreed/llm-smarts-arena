@@ -113,7 +113,7 @@ Benchmark results are visualized as PNG charts in the `figures/` directory. All 
 
 - [Claude family results](figures/claude/)
 - [OpenAI family results](figures/openai/)
-- [Google family results](figures/google/)
+- [Google family results](figures/google/) (includes Gemini and Gemma models)
 
 ### Rebuild Figures
 
@@ -146,9 +146,11 @@ python compare_benchmark_results.py \
   outputs/openai/gpt-5-4-nano/20260417T155307Z \
   --output-prefix figures/openai/benchmark_percentages
 
-# Family-specific (Google)
+# Family-specific (Google - includes Gemini and Gemma models)
 python compare_benchmark_results.py \
   outputs/google/gemini-3-1-pro-preview/20260420T111859Z \
+  outputs/openrouter/google-gemma-4-31b-it-free/20260420T123900Z \
+  --labels "Gemini 3.1 Pro" "Gemma 4 31B" \
   --output-prefix figures/google/benchmark_percentages
 ```
 
