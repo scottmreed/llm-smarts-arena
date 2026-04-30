@@ -97,6 +97,80 @@ def _write_payload(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
 
 
+def aggregate_usage_turns(usages: list[dict | None]) -> dict[str, int]:
+    """Sum numeric token fields across one or more API usage dicts (per-turn)."""
+    totals: dict[str, int] = {}
+    for u in usages:
+        if not u:
+            continue
+        for k, v in u.items():
+            if k == "stop_reason":
+                continue
+            if not isinstance(v, (int, float)) or isinstance(v, bool):
+                continue
+            if v != v:  # NaN
+                continue
+            totals[k] = totals.get(k, 0) + int(v)
+    # Normalize OpenAI field names into input/output for consistent plotting.
+    if "prompt_tokens" in totals:
+        totals["input_tokens"] = totals.get("input_tokens", 0) + totals.pop("prompt_tokens")
+    if "completion_tokens" in totals:
+        totals["output_tokens"] = totals.get("output_tokens", 0) + totals.pop("completion_tokens")
+    return totals
+
+
+def total_tokens_from_usage_totals(totals: dict[str, int]) -> int:
+    """Single scalar for scatter plots: sum of reported token components (no double-count)."""
+    return (
+        totals.get("input_tokens", 0)
+        + totals.get("output_tokens", 0)
+        + totals.get("thinking_tokens", 0)
+        + totals.get("cache_creation_input_tokens", 0)
+        + totals.get("cache_read_input_tokens", 0)
+    )
+
+
+def build_run_metrics(
+    *,
+    elapsed_seconds: float,
+    usage_turns: list[dict | None],
+) -> dict[str, Any]:
+    """Wall time and aggregated token usage for logging and combination plots."""
+    clean_turns = [u for u in usage_turns if u]
+    totals = aggregate_usage_turns(list(usage_turns))
+    return {
+        "elapsed_seconds": round(float(elapsed_seconds), 4),
+        "usage_totals": totals,
+        "total_tokens": int(total_tokens_from_usage_totals(totals)),
+        "usage_turns": clean_turns,
+    }
+
+
+def append_benchmark_metrics_log(
+    repo_root: Path,
+    public_run_dir: Path,
+    run_metrics: dict[str, Any],
+    *,
+    model: str,
+    family: str,
+    core_percent: float,
+    timestamp_utc: str,
+) -> None:
+    """Append one JSON line for offline plotting (see outputs/benchmark_metrics_log.jsonl)."""
+    log_path = repo_root / "outputs" / "benchmark_metrics_log.jsonl"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    record: dict[str, Any] = {
+        "model": model,
+        "family": family,
+        "timestamp_utc": timestamp_utc,
+        "core_percent": core_percent,
+        "run_dir": str(public_run_dir.relative_to(repo_root)),
+        **run_metrics,
+    }
+    with log_path.open("a", encoding="utf-8") as f:
+        f.write(json.dumps(record, default=str) + "\n")
+
+
 def write_run_artifacts(
     *,
     public_dir: Path,
@@ -107,11 +181,25 @@ def write_run_artifacts(
     struggle: dict[str, Any],
     private_payload: dict[str, Any],
     trusted_payload: dict[str, Any] | None,
+    run_metrics: dict[str, Any] | None = None,
+    repo_root: Path | None = None,
 ) -> None:
     public_dir.mkdir(parents=True, exist_ok=True)
     _write_payload(public_dir / "summary.json", summary)
     _write_payload(public_dir / "grade_result.json", public_grade)
     _write_payload(public_dir / "run_meta.json", meta)
+    if run_metrics is not None:
+        _write_payload(public_dir / "run_metrics.json", run_metrics)
+        if repo_root is not None:
+            append_benchmark_metrics_log(
+                repo_root,
+                public_dir,
+                run_metrics,
+                model=str(meta.get("model", "")),
+                family=str(meta.get("family", "")),
+                core_percent=float(summary.get("core_percent") or 0.0),
+                timestamp_utc=str(meta.get("timestamp_utc", "")),
+            )
 
     if private_payload or trusted_payload or struggle:
         private_dir.mkdir(parents=True, exist_ok=True)

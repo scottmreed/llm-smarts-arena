@@ -56,6 +56,7 @@ cp .env.example .env
 ```bash
 # Run any supported model - automatically detects family and wires up API
 python ~/.cursor/skills/run-smiles-benchmark/run_smiles_benchmark_skill.py "claude-opus-4-7"
+python ~/.cursor/skills/run-smiles-benchmark/run_smiles_benchmark_skill.py "gpt-5.5"
 python ~/.cursor/skills/run-smiles-benchmark/run_smiles_benchmark_skill.py "gpt-5.4"
 
 # The skill will:
@@ -73,6 +74,7 @@ python ~/.cursor/skills/run-smiles-benchmark/run_smiles_benchmark_skill.py "gpt-
 python run_smiles_benchmark_claude.py --model claude-sonnet-4-6
 
 # OpenAI
+python run_smiles_benchmark_openai.py --model gpt-5.5
 python run_smiles_benchmark_openai.py --model gpt-5.4-nano
 python run_smiles_benchmark_openai.py --model gpt-5.4-mini
 
@@ -125,6 +127,7 @@ python compare_benchmark_results.py \
   outputs/claude/claude-opus-4-7/20260417T182609Z \
   outputs/claude/claude-sonnet-4-6/20260417T155306Z \
   outputs/claude/claude-haiku-4-5/20260417T155307Z \
+  outputs/openai/gpt-5-5/20260429T175554Z \
   outputs/openai/gpt-5.4/20260417T182903Z \
   outputs/openai/gpt-5-4-mini/20260420T152035Z \
   outputs/openai/gpt-5-4-nano/20260417T155307Z \
@@ -141,6 +144,7 @@ python compare_benchmark_results.py \
 
 # Family-specific (OpenAI)
 python compare_benchmark_results.py \
+  outputs/openai/gpt-5-5/20260429T175554Z \
   outputs/openai/gpt-5.4/20260417T182903Z \
   outputs/openai/gpt-5-4-mini/20260420T152035Z \
   outputs/openai/gpt-5-4-nano/20260417T155307Z \

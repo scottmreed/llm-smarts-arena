@@ -102,6 +102,7 @@ class RunnerUtilsTests(unittest.TestCase):
         paths = _load_module("benchmark_paths", "benchmark_paths.py")
         self.assertEqual(paths.model_slug("claude-sonnet-4-6"), "claude-sonnet-4-6")
         self.assertEqual(paths.model_slug("gpt-5.4-nano"), "gpt-5-4-nano")
+        self.assertEqual(paths.model_slug("gpt-5.5"), "gpt-5-5")
         run_dir = paths.run_directory(ROOT / "outputs", "claude", "claude-haiku-4-5", "20260417T000000Z")
         self.assertEqual(
             run_dir,
@@ -188,6 +189,29 @@ class RunnerUtilsTests(unittest.TestCase):
         self.assertTrue(report["Q-C1"]["exact_match"])
         self.assertTrue(report["Q-C1"]["canonical_match"])
         self.assertTrue(report["Q-C10"]["exact_match"])
+
+    def test_aggregate_usage_turns_merges_openai_style_prompt_completion_tokens(self):
+        totals = runner_utils.aggregate_usage_turns(
+            [
+                {"prompt_tokens": 10, "completion_tokens": 5},
+                {"input_tokens": 1, "output_tokens": 2, "cache_read_input_tokens": 3},
+            ]
+        )
+        self.assertEqual(totals["input_tokens"], 11)
+        self.assertEqual(totals["output_tokens"], 7)
+        self.assertEqual(totals["cache_read_input_tokens"], 3)
+        self.assertEqual(
+            runner_utils.total_tokens_from_usage_totals(totals),
+            11 + 7 + 3,
+        )
+
+    def test_build_run_metrics_includes_total_tokens(self):
+        rm = runner_utils.build_run_metrics(
+            elapsed_seconds=2.25,
+            usage_turns=[{"input_tokens": 4, "output_tokens": 5, "thinking_tokens": 1}],
+        )
+        self.assertEqual(rm["elapsed_seconds"], 2.25)
+        self.assertEqual(rm["total_tokens"], 10)
 
 
 class AnswerKeyTests(unittest.TestCase):

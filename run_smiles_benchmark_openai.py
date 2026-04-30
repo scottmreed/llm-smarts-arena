@@ -12,6 +12,10 @@ Design goals:
 - **No letter grade.** Just the numeric score / max / percent.
 
 Requirements: OPENAI_API_KEY, openai, RDKit.
+
+Frontier GPT-5.x models (e.g. ``gpt-5.5``, ``gpt-5.4``) use the Chat Completions API
+(``POST /v1/chat/completions``) as listed under Endpoints on the model page:
+https://developers.openai.com/api/docs/models/gpt-5.5
 """
 
 from __future__ import annotations
@@ -20,6 +24,7 @@ import argparse
 import importlib.util
 import json
 import os
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -38,6 +43,7 @@ from benchmark_manifest import (
 from benchmark_paths import run_directory
 from benchmark_runner_utils import (
     build_diagnostic_match_report,
+    build_run_metrics,
     build_single_turn_result,
     load_secret_benchmark_module,
     private_run_directory,
@@ -228,6 +234,7 @@ def main() -> None:
     print(f"Running benchmark with model: {model_name}")
     print("Sending initial request...")
 
+    t_wall_start = time.perf_counter()
     response1 = client.chat.completions.create(
         model=model_name,
         max_completion_tokens=max_tokens,
@@ -296,6 +303,14 @@ def main() -> None:
             "diagnostic_report.json": diagnostic_report,
         }
 
+    elapsed_seconds = time.perf_counter() - t_wall_start
+    run_metrics = build_run_metrics(elapsed_seconds=elapsed_seconds, usage_turns=[usage1])
+    meta["run_metrics"] = {
+        "elapsed_seconds": run_metrics["elapsed_seconds"],
+        "total_tokens": run_metrics["total_tokens"],
+        "usage_totals": run_metrics["usage_totals"],
+    }
+
     write_run_artifacts(
         public_dir=run_dir,
         private_dir=private_run_dir,
@@ -305,6 +320,8 @@ def main() -> None:
         struggle=struggle,
         private_payload=private_payload,
         trusted_payload=trusted_payload,
+        run_metrics=run_metrics,
+        repo_root=_DIR,
     )
 
     print("\n" + "="*50)

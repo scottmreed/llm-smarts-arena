@@ -54,6 +54,8 @@ class RunResult:
     benchmark_version: str
     benchmark_major: int
     per_question: dict
+    elapsed_seconds: float | None = None
+    total_tokens: int | None = None
 
 
 def _load_json(path: Path) -> dict:
@@ -104,6 +106,8 @@ def _pretty_model_label(model_name: str) -> str:
         "claude-haiku-4-5": "Claude Haiku 4.5",
         "claude-opus-4-7": "Claude Opus 4.7",
         "gpt-5.4": "GPT-5.4",
+        "gpt-5.5": "GPT-5.5",
+        "gpt-5-5": "GPT-5.5",
         "gpt-5.4-nano": "GPT-5.4 nano",
         "gpt-5-4-nano": "GPT-5.4 nano",
         "gemini-3.1-pro-preview": "Gemini 3.1 Pro",
@@ -133,10 +137,11 @@ def _pretty_model_label(model_name: str) -> str:
 
 def load_run(path_str: str, label_override: str | None) -> RunResult:
     run_dir, summary_path, grade_path = _resolve_run(path_str)
-    summary = _load_json(summary_path)
     grade = _load_json(grade_path)
     meta_path = run_dir / "run_meta.json"
     meta = _load_json(meta_path) if meta_path.exists() else {}
+    metrics_path = run_dir / "run_metrics.json"
+    metrics = _load_json(metrics_path) if metrics_path.exists() else {}
     model_name = meta.get("model") or run_dir.parent.name
     family = _infer_family(run_dir, model_name)
     brand_family = _infer_brand_family(model_name, family)
@@ -145,6 +150,18 @@ def load_run(path_str: str, label_override: str | None) -> RunResult:
     version = meta.get("benchmark_version", BENCHMARK_VERSION)
     label = label_override or _pretty_model_label(model_name)
     core_percent = percent_for_questions(grade["per_question"], CORE_QUESTION_IDS)
+    elapsed = metrics.get("elapsed_seconds")
+    if elapsed is not None:
+        try:
+            elapsed = float(elapsed)
+        except (TypeError, ValueError):
+            elapsed = None
+    total_tokens = metrics.get("total_tokens")
+    if total_tokens is not None:
+        try:
+            total_tokens = int(total_tokens)
+        except (TypeError, ValueError):
+            total_tokens = None
     return RunResult(
         label=label,
         model=model_name,
@@ -155,6 +172,8 @@ def load_run(path_str: str, label_override: str | None) -> RunResult:
         benchmark_version=version,
         benchmark_major=benchmark_major(version),
         per_question=grade["per_question"],
+        elapsed_seconds=elapsed,
+        total_tokens=total_tokens,
     )
 
 
@@ -473,6 +492,102 @@ def plot_categories(runs: list[RunResult], output_path: Path) -> None:
     image.save(output_path)
 
 
+def _combo_filtered_runs(runs: list[RunResult], x_mode: str) -> list[RunResult]:
+    out: list[RunResult] = []
+    for run in runs:
+        if x_mode == "time":
+            if run.elapsed_seconds is not None and run.elapsed_seconds >= 0:
+                out.append(run)
+        elif x_mode == "tokens":
+            if run.total_tokens is not None and run.total_tokens >= 0:
+                out.append(run)
+    return out
+
+
+def _x_value(run: RunResult, x_mode: str) -> float:
+    if x_mode == "time":
+        return float(run.elapsed_seconds or 0.0)
+    return float(run.total_tokens or 0)
+
+
+def plot_combination(runs: list[RunResult], output_path: Path, *, x_mode: str) -> None:
+    """Scatter plot: core-set percent (y) vs elapsed seconds or total tokens (x)."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    filtered = _combo_filtered_runs(runs, x_mode)
+    if not filtered:
+        print(
+            f"Skipping combination plot ({x_mode}): no runs with run_metrics.json "
+            "(elapsed_seconds / total_tokens)."
+        )
+        return
+
+    ordered = sorted(filtered, key=lambda run: (-run.percent, _family_rank(run.family), run.label))
+    family_seen: dict[str, int] = {}
+
+    width, height = 1600, 900
+    image, draw = _create_canvas(width, height)
+    box = _card_box(width, height)
+    _draw_card(image, draw, box)
+    x_label = "Wall time (s)" if x_mode == "time" else "Total tokens (reported)"
+    subtitle = f"{BENCHMARK_NAME} v{BENCHMARK_VERSION}; each point is one run with logged metrics"
+    _draw_header(draw, box, "SMARTS Test — score vs cost", subtitle)
+
+    plot = (box[0] + 95, box[1] + 208, box[2] - 44, box[3] - 280)
+    left, top, right, bottom = plot
+    _draw_grid(draw, plot)
+    draw.line((left, bottom, right, bottom), fill=GRID, width=2)
+    draw.line((left, top, left, bottom), fill=GRID, width=2)
+
+    xs = [_x_value(run, x_mode) for run in ordered]
+    max_x = max(xs) if xs else 1.0
+    min_x = min(xs) if xs else 0.0
+    if max_x <= min_x:
+        max_x = min_x + 1.0
+    span = max_x - min_x
+    pad = span * 0.06 if span > 0 else max_x * 0.06 or 1.0
+    axis_left = max(0.0, min_x - pad)
+    axis_right = max_x + pad
+
+    # Axis ticks (x)
+    for i in range(6):
+        t = axis_left + (axis_right - axis_left) * i / 5
+        x_pix = left + (t - axis_left) / (axis_right - axis_left) * (right - left)
+        draw.line((int(x_pix), bottom, int(x_pix), bottom + 8), fill=MUTED, width=2)
+        tick_txt = f"{t:.1f}" if x_mode == "time" else f"{t:.0f}"
+        draw.text((int(x_pix), bottom + 14), tick_txt, fill=MUTED, font=_load_font(20), anchor="mt")
+
+    draw.text(((left + right) / 2, bottom + 52), x_label, fill=MUTED, font=_load_font(24), anchor="mm")
+
+    # Y axis (percent)
+    for i in range(6):
+        p = i * 20
+        y_pix = bottom - (bottom - top) * (p / 100.0)
+        draw.line((left - 8, int(y_pix), left, int(y_pix)), fill=MUTED, width=2)
+        draw.text((left - 14, int(y_pix)), f"{p}", fill=MUTED, font=_load_font(20), anchor="rm")
+
+    draw.text((left - 72, (top + bottom) / 2), "Core set %", fill=MUTED, font=_load_font(24), anchor="mm")
+
+    for run in ordered:
+        family_index = family_seen.get(run.family, 0)
+        family_seen[run.family] = family_index + 1
+        color = _bar_color(run, family_index)
+        xv = _x_value(run, x_mode)
+        x_pix = left + (xv - axis_left) / (axis_right - axis_left) * (right - left)
+        y_pix = bottom - (bottom - top) * (run.percent / 100.0)
+        r = 14
+        draw.ellipse(
+            (x_pix - r, y_pix - r, x_pix + r, y_pix + r),
+            fill=color,
+            outline=CARD_BORDER,
+            width=2,
+        )
+        draw.text((x_pix, y_pix - 26), f"{run.percent:.0f}%", fill=TEXT, font=_load_font(22), anchor="mb")
+        short = run.label if len(run.label) <= 28 else run.label[:25] + "…"
+        draw.text((x_pix, y_pix + r + 10), short, fill=MUTED, font=_load_font(18), anchor="mt")
+
+    image.save(output_path)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -495,6 +610,15 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Allow mixed major benchmark versions in one graph.",
     )
+    parser.add_argument(
+        "--combination",
+        action="append",
+        choices=("percent-time", "percent-tokens"),
+        help=(
+            "Also emit a scatter plot of core-set percent vs wall time or total tokens "
+            "(runs without outputs/.../run_metrics.json are omitted)."
+        ),
+    )
     return parser.parse_args()
 
 
@@ -512,6 +636,18 @@ def main() -> None:
     plot_categories(runs, Path(f"{args.output_prefix}_by_category.png"))
     print(f"Generated {args.output_prefix}_overall.png")
     print(f"Generated {args.output_prefix}_by_category.png")
+    combination = args.combination or []
+    for mode in combination:
+        if mode == "percent-time":
+            out = Path(f"{args.output_prefix}_percent_vs_time.png")
+            plot_combination(runs, out, x_mode="time")
+            if out.is_file():
+                print(f"Generated {out}")
+        elif mode == "percent-tokens":
+            out = Path(f"{args.output_prefix}_percent_vs_tokens.png")
+            plot_combination(runs, out, x_mode="tokens")
+            if out.is_file():
+                print(f"Generated {out}")
 
 
 if __name__ == "__main__":
