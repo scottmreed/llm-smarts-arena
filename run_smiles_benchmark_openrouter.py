@@ -114,7 +114,10 @@ def _load_grader():
 def _text_response(response) -> str:
     if hasattr(response, "choices") and response.choices:
         message = response.choices[0].message
-        return message.content or ""
+        content = getattr(message, "content", None)
+        if isinstance(content, str) and content:
+            return content
+        return content or ""
     return ""
 
 
@@ -129,6 +132,8 @@ def _dump_response_trace(response) -> list[dict]:
         }
         if hasattr(message, "content"):
             entry["content"] = message.content
+        if hasattr(message, "reasoning"):
+            entry["reasoning"] = getattr(message, "reasoning", None)
         trace.append(entry)
     return trace
 
@@ -141,6 +146,41 @@ def _usage_dict(response) -> dict | None:
         "input_tokens": getattr(usage, "prompt_tokens", None),
         "output_tokens": getattr(usage, "completion_tokens", None),
     }
+
+
+def _stream_response(stream) -> tuple[str, list[dict], dict | None]:
+    parts: list[str] = []
+    trace: list[dict] = []
+    usage = None
+    for idx, chunk in enumerate(stream):
+        chunk_usage = getattr(chunk, "usage", None)
+        if chunk_usage is not None:
+            usage = chunk_usage
+        if not getattr(chunk, "choices", None):
+            continue
+        delta = chunk.choices[0].delta
+        entry: dict[str, Any] = {"index": idx, "type": "delta"}
+        content = getattr(delta, "content", None)
+        if content:
+            parts.append(content)
+            entry["content"] = content
+        reasoning = getattr(delta, "reasoning", None)
+        if reasoning:
+            entry["reasoning"] = reasoning
+        if len(entry) > 2:
+            trace.append(entry)
+    usage_dict = None
+    if usage is not None:
+        usage_dict = {
+            "input_tokens": getattr(usage, "prompt_tokens", None),
+            "output_tokens": getattr(usage, "completion_tokens", None),
+        }
+        details = getattr(usage, "completion_tokens_details", None)
+        if details is not None:
+            reasoning_tokens = getattr(details, "reasoning_tokens", None)
+            if reasoning_tokens is not None:
+                usage_dict["reasoning_tokens"] = reasoning_tokens
+    return "".join(parts), trace, usage_dict
 
 
 def _build_struggle_report(grade: dict, submitted_by_id: dict) -> dict:
@@ -176,6 +216,34 @@ def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default=_DEFAULT_MODEL, help="OpenRouter model ID (e.g. google/gemma-4-31b-it:free)")
     parser.add_argument("--max-tokens", type=int, default=_MAX_TOKENS, help="Max output tokens")
+    parser.add_argument(
+        "--reasoning-effort",
+        default="none",
+        choices=("none", "minimal", "low", "medium", "high", "xhigh"),
+        help="OpenRouter unified reasoning control (use 'none' or 'low' per request)",
+    )
+    parser.add_argument(
+        "--reasoning-max-tokens",
+        type=int,
+        default=None,
+        help="If set, uses reasoning.max_tokens budget instead of reasoning.effort",
+    )
+    parser.add_argument(
+        "--include-reasoning",
+        action="store_true",
+        help="Include reasoning tokens/fields in the response payload (may be useful for some models)",
+    )
+    parser.add_argument(
+        "--response-format",
+        default="none",
+        choices=("none", "json_object"),
+        help="If set, passes OpenAI-style response_format to encourage valid JSON in message.content",
+    )
+    parser.add_argument(
+        "--stream",
+        action="store_true",
+        help="Stream the response and collect delta.content chunks",
+    )
     return parser.parse_args()
 
 
@@ -197,6 +265,11 @@ def main() -> None:
     args = _parse_args()
     model_name = args.model
     max_tokens = args.max_tokens
+    reasoning_effort = args.reasoning_effort
+    reasoning_max_tokens = args.reasoning_max_tokens
+    include_reasoning = bool(args.include_reasoning)
+    response_format = args.response_format
+    stream_response = bool(args.stream)
     prompt = _QUESTIONS.read_text(encoding="utf-8")
 
     client = OpenAI(
@@ -234,15 +307,34 @@ def main() -> None:
     print("Sending request...")
 
     t_wall_start = time.perf_counter()
+    reasoning: dict[str, Any] = {"exclude": (not include_reasoning)}
+    if reasoning_max_tokens is not None:
+        reasoning["max_tokens"] = int(reasoning_max_tokens)
+    else:
+        reasoning["effort"] = reasoning_effort
+    extra_body = {"reasoning": reasoning}
+    create_kwargs: dict[str, Any] = {
+        "model": model_name,
+        "max_completion_tokens": max_tokens,
+        "messages": [{"role": "user", "content": prompt}],
+        "extra_body": extra_body,
+    }
+    if stream_response:
+        create_kwargs["stream"] = True
+        create_kwargs["stream_options"] = {"include_usage": True}
+    if response_format == "json_object":
+        create_kwargs["response_format"] = {"type": "json_object"}
+
     response = client.chat.completions.create(
-        model=model_name,
-        max_completion_tokens=max_tokens,
-        messages=[{"role": "user", "content": prompt}],
+        **create_kwargs,
     )
 
-    raw1 = _text_response(response)
-    trace1 = _dump_response_trace(response)
-    usage1 = _usage_dict(response)
+    if stream_response:
+        raw1, trace1, usage1 = _stream_response(response)
+    else:
+        raw1 = _text_response(response)
+        trace1 = _dump_response_trace(response)
+        usage1 = _usage_dict(response)
 
     single_turn = build_single_turn_result(raw1, _REQUIRED_IDS)
     final_payload = single_turn["payload"]

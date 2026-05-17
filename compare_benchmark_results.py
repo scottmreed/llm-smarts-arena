@@ -113,6 +113,14 @@ def _pretty_model_label(model_name: str) -> str:
         "gemini-3.1-pro-preview": "Gemini 3.1 Pro",
         "google/gemma-4-31b-it:free": "Gemma 4 31B",
         "google-gemma-4-31b-it-free": "Gemma 4 31B",
+        "deepseek/deepseek-v3.2": "DeepSeek V3.2",
+        "deepseek-deepseek-v3-2": "DeepSeek V3.2",
+        "moonshotai/kimi-k2.5": "Kimi K2.5",
+        "moonshotai-kimi-k2-5": "Kimi K2.5",
+        "z-ai/glm-5": "GLM 5",
+        "z-ai-glm-5": "GLM 5",
+        "minimax/minimax-m2.7": "MiniMax M2.7",
+        "minimax-minimax-m2-7": "MiniMax M2.7",
     }
     if model_name in aliases:
         return aliases[model_name]
