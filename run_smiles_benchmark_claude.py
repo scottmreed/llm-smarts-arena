@@ -69,6 +69,11 @@ _OUTPUT_DIR = _DIR / "outputs"
 _DEFAULT_MODEL = "claude-opus-4-7"
 _FAMILY = "claude"
 _MAX_TOKENS = 16000
+# Models that use adaptive thinking by default and need a higher token budget
+_ADAPTIVE_THINKING_MODELS = {"claude-fable-5"}
+_ADAPTIVE_THINKING_MAX_TOKENS = 64000
+# SDK raises ValueError for non-streaming requests above this threshold
+_STREAM_THRESHOLD = 16000
 _REQUIRED_IDS = PUBLIC_QUESTION_IDS[:]
 
 _Q_TOPICS = {
@@ -181,10 +186,20 @@ def _build_struggle_report(grade: dict, submitted_by_id: dict) -> dict:
     }
 
 
+def _make_api_call(client, model_name: str, max_tokens: int, messages: list) -> Any:
+    """Call the API, using streaming when max_tokens exceeds the non-streaming threshold."""
+    kwargs = dict(model=model_name, max_tokens=max_tokens, messages=messages)
+    if max_tokens > _STREAM_THRESHOLD:
+        with client.messages.stream(**kwargs) as stream:
+            return stream.get_final_message()
+    return client.messages.create(**kwargs)
+
+
 def _parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--model", default=_DEFAULT_MODEL, help="Anthropic model name")
-    parser.add_argument("--max-tokens", type=int, default=_MAX_TOKENS, help="Max output tokens")
+    parser.add_argument("--max-tokens", type=int, default=None,
+                        help="Max output tokens (default: 64000 for adaptive-thinking models, 16000 otherwise)")
     return parser.parse_args()
 
 
@@ -205,7 +220,13 @@ def main() -> None:
 
     args = _parse_args()
     model_name = args.model
-    max_tokens = args.max_tokens
+    if args.max_tokens is not None:
+        max_tokens = args.max_tokens
+    elif model_name in _ADAPTIVE_THINKING_MODELS:
+        max_tokens = _ADAPTIVE_THINKING_MAX_TOKENS
+        print(f"Note: {model_name} uses adaptive thinking by default; using max_tokens={max_tokens} with streaming.")
+    else:
+        max_tokens = _MAX_TOKENS
     prompt = _QUESTIONS.read_text(encoding="utf-8")
 
     client = Anthropic(api_key=api_key)
@@ -241,11 +262,7 @@ def main() -> None:
     print("Sending initial request...")
 
     t_wall_start = time.perf_counter()
-    response1 = client.messages.create(
-        model=model_name,
-        max_tokens=max_tokens,
-        messages=messages,
-    )
+    response1 = _make_api_call(client, model_name, max_tokens, messages)
 
     raw1 = _anthropic_text_response(response1)
     trace1 = _dump_response_trace(response1)
@@ -279,6 +296,7 @@ def main() -> None:
         "percent": grade.get("percent"),
         "core_percent": percent_for_questions(grade.get("per_question", {}), CORE_QUESTION_IDS),
         "parse_ok": single_turn["parse_ok"],
+        "json_repaired": single_turn["json_repaired"],
         "retry_used": retry_used,
         "missing_ids_turn1": missing,
         "missing_ids_final": single_turn["missing_ids_final"],

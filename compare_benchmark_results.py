@@ -102,6 +102,8 @@ def _infer_brand_family(model_name: str, fallback_family: str) -> str:
 
 def _pretty_model_label(model_name: str) -> str:
     aliases = {
+        "claude-fable-5": "Claude Fable 5",
+        "claude-opus-4-8": "Claude Opus 4.8",
         "claude-sonnet-4-6": "Claude Sonnet 4.6",
         "claude-haiku-4-5": "Claude Haiku 4.5",
         "claude-opus-4-7": "Claude Opus 4.7",
@@ -119,8 +121,18 @@ def _pretty_model_label(model_name: str) -> str:
         "moonshotai-kimi-k2-5": "Kimi K2.5",
         "z-ai/glm-5": "GLM 5",
         "z-ai-glm-5": "GLM 5",
+        "z-ai/glm-5.2": "GLM 5.2",
+        "z-ai-glm-5-2": "GLM 5.2",
         "minimax/minimax-m2.7": "MiniMax M2.7",
         "minimax-minimax-m2-7": "MiniMax M2.7",
+        "moonshotai/kimi-k2.6": "Kimi K2.6",
+        "moonshotai-kimi-k2-6": "Kimi K2.6",
+        "deepseek/deepseek-v4-pro": "DeepSeek V4 Pro",
+        "deepseek-deepseek-v4-pro": "DeepSeek V4 Pro",
+        "qwen/qwen3.6-max-preview": "Qwen3.6 Max Preview",
+        "qwen-qwen3-6-max-preview": "Qwen3.6 Max Preview",
+        "nvidia/nemotron-3-ultra-550b-a55b": "Nemotron 3 Ultra",
+        "nvidia-nemotron-3-ultra-550b-a55b": "Nemotron 3 Ultra",
     }
     if model_name in aliases:
         return aliases[model_name]

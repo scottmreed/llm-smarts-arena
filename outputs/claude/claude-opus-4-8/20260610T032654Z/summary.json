@@ -1,0 +1,14 @@
+{
+  "score": 34.0,
+  "max_points": 64.0,
+  "percent": 53.12,
+  "core_percent": 53.12,
+  "parse_ok": true,
+  "retry_used": false,
+  "missing_ids_turn1": [
+    "Q-C2"
+  ],
+  "missing_ids_final": [
+    "Q-C2"
+  ]
+}

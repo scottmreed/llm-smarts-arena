@@ -74,6 +74,7 @@ _FAMILY = "openrouter"
 _OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 _MAX_TOKENS = 16000
 _REQUIRED_IDS = PUBLIC_QUESTION_IDS[:]
+_EXPLICIT_REASONING_DISABLED_MODELS = {"z-ai/glm-5.2"}
 
 _Q_TOPICS = {
     "Q1": "long mixed-heteroatom chain: heavy / total atoms w/ H / rotatable bonds",
@@ -146,6 +147,24 @@ def _usage_dict(response) -> dict | None:
         "input_tokens": getattr(usage, "prompt_tokens", None),
         "output_tokens": getattr(usage, "completion_tokens", None),
     }
+
+
+def _build_extra_body(
+    *,
+    model_name: str,
+    include_reasoning: bool,
+    reasoning_effort: str,
+    reasoning_max_tokens: int | None,
+) -> dict[str, Any]:
+    if model_name in _EXPLICIT_REASONING_DISABLED_MODELS and not include_reasoning and reasoning_max_tokens is None:
+        return {"reasoning": {"enabled": False}}
+
+    reasoning: dict[str, Any] = {"exclude": (not include_reasoning)}
+    if reasoning_max_tokens is not None:
+        reasoning["max_tokens"] = int(reasoning_max_tokens)
+    else:
+        reasoning["effort"] = reasoning_effort
+    return {"reasoning": reasoning}
 
 
 def _stream_response(stream) -> tuple[str, list[dict], dict | None]:
@@ -307,12 +326,12 @@ def main() -> None:
     print("Sending request...")
 
     t_wall_start = time.perf_counter()
-    reasoning: dict[str, Any] = {"exclude": (not include_reasoning)}
-    if reasoning_max_tokens is not None:
-        reasoning["max_tokens"] = int(reasoning_max_tokens)
-    else:
-        reasoning["effort"] = reasoning_effort
-    extra_body = {"reasoning": reasoning}
+    extra_body = _build_extra_body(
+        model_name=model_name,
+        include_reasoning=include_reasoning,
+        reasoning_effort=reasoning_effort,
+        reasoning_max_tokens=reasoning_max_tokens,
+    )
     create_kwargs: dict[str, Any] = {
         "model": model_name,
         "max_completion_tokens": max_tokens,
@@ -361,12 +380,14 @@ def main() -> None:
         "percent": grade.get("percent"),
         "core_percent": percent_for_questions(grade.get("per_question", {}), CORE_QUESTION_IDS),
         "parse_ok": single_turn["parse_ok"],
+        "json_repaired": single_turn["json_repaired"],
         "retry_used": retry_used,
         "missing_ids_turn1": missing,
         "missing_ids_final": single_turn["missing_ids_final"],
     }
 
     meta["summary"] = summary
+    meta["extra_body"] = extra_body
 
     struggle = _build_struggle_report(grade, submitted_by_id)
     struggle["summary"] = summary

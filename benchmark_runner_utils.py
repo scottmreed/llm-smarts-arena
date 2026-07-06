@@ -6,6 +6,8 @@ import re
 from pathlib import Path
 from typing import Any, Callable
 
+import json_repair
+
 
 PRIVATE_ROOT_NAME = ".benchmark_private"
 SECRET_MODULE_NAME = "secret_benchmark.py"
@@ -23,15 +25,27 @@ def extract_json_substring(text: str) -> str:
     return text
 
 
+def repair_json_loose(text: str):
+    """Best-effort structural repair for malformed model JSON (e.g. unbalanced
+    brackets/quotes). Returns a dict on success, None if repair yields nothing
+    usable. Applied only after strict parsing has already failed."""
+    for candidate in (text, extract_json_substring(text)):
+        repaired = json_repair.loads(candidate)
+        if isinstance(repaired, dict) and repaired:
+            return repaired
+    return None
+
+
 def parse_json_loose(text: str):
     try:
-        return json.loads(text)
+        return json.loads(text), False
     except json.JSONDecodeError:
         extracted = extract_json_substring(text)
         try:
-            return json.loads(extracted)
+            return json.loads(extracted), False
         except json.JSONDecodeError:
-            return None
+            repaired = repair_json_loose(text)
+            return repaired, repaired is not None
 
 
 def missing_ids(payload: dict[str, Any] | None, required_ids: list[str]) -> list[str]:
@@ -43,13 +57,14 @@ def missing_ids(payload: dict[str, Any] | None, required_ids: list[str]) -> list
 
 
 def build_single_turn_result(raw_text: str, required_ids: list[str]) -> dict[str, Any]:
-    payload = parse_json_loose(raw_text)
+    payload, json_repaired = parse_json_loose(raw_text)
     parse_ok = isinstance(payload, dict)
     final_payload = payload if parse_ok else {"answers": []}
     missing = missing_ids(payload if parse_ok else None, required_ids)
     return {
         "payload": final_payload,
         "parse_ok": parse_ok,
+        "json_repaired": json_repaired,
         "retry_used": False,
         "missing_ids_turn1": missing,
         "missing_ids_final": missing_ids(final_payload, required_ids),

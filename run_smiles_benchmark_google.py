@@ -291,6 +291,7 @@ def main() -> None:
         "percent": grade.get("percent"),
         "core_percent": percent_for_questions(grade.get("per_question", {}), CORE_QUESTION_IDS),
         "parse_ok": single_turn["parse_ok"],
+        "json_repaired": single_turn["json_repaired"],
         "retry_used": retry_used,
         "missing_ids_turn1": missing,
         "missing_ids_final": single_turn["missing_ids_final"],

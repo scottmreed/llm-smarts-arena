@@ -21,6 +21,7 @@ grader = _load_module("smiles_llm_grader_v1", "smiles_llm_grader_v1.py")
 manifest = _load_module("benchmark_manifest", "benchmark_manifest.py")
 runner_utils = _load_module("benchmark_runner_utils", "benchmark_runner_utils.py")
 keygen = _load_module("generate_answer_key", "generate_answer_key.py")
+openrouter_runner = _load_module("run_smiles_benchmark_openrouter", "run_smiles_benchmark_openrouter.py")
 
 
 class BenchmarkPromptTests(unittest.TestCase):
@@ -95,8 +96,16 @@ class RunnerUtilsTests(unittest.TestCase):
     def test_single_turn_result_reports_invalid_json_without_retry(self):
         result = runner_utils.build_single_turn_result("not json", ["Q1", "Q2"])
         self.assertFalse(result["parse_ok"])
+        self.assertFalse(result["json_repaired"])
         self.assertEqual(result["missing_ids_turn1"], ["Q1", "Q2"])
         self.assertFalse(result["retry_used"])
+
+    def test_single_turn_result_repairs_structurally_broken_json(self):
+        broken = '{"answers": [{"id": "Q1", "answer": {"products": ["A", "B"}}]}'
+        result = runner_utils.build_single_turn_result(broken, ["Q1"])
+        self.assertTrue(result["parse_ok"])
+        self.assertTrue(result["json_repaired"])
+        self.assertEqual(result["missing_ids_turn1"], [])
 
     def test_family_paths_and_model_slug(self):
         paths = _load_module("benchmark_paths", "benchmark_paths.py")
@@ -212,6 +221,15 @@ class RunnerUtilsTests(unittest.TestCase):
         )
         self.assertEqual(rm["elapsed_seconds"], 2.25)
         self.assertEqual(rm["total_tokens"], 10)
+
+    def test_openrouter_glm_52_payload_disables_reasoning_explicitly(self):
+        extra_body = openrouter_runner._build_extra_body(
+            model_name="z-ai/glm-5.2",
+            include_reasoning=False,
+            reasoning_effort="none",
+            reasoning_max_tokens=None,
+        )
+        self.assertEqual(extra_body["reasoning"], {"enabled": False})
 
 
 class AnswerKeyTests(unittest.TestCase):

@@ -111,12 +111,21 @@ Benchmark results are visualized as PNG charts in the `figures/` directory. All 
 
 ![Category Breakdown](figures/combined/benchmark_percentages_by_category.png)
 
+### Open Source Models
+
+**Open Source Leaderboard** — Overall performance across open-weight models (Gemma, DeepSeek, Kimi, GLM, Qwen, Nemotron):
+
+![Open Source Overall](figures/opensource/benchmark_percentages_overall.png)
+
+![Open Source Category Breakdown](figures/opensource/benchmark_percentages_by_category.png)
+
 ### Per-Family Results
 
 - [Claude family results](figures/claude/)
 - [OpenAI family results](figures/openai/)
 - [Google family results](figures/google/) (includes Gemini and Gemma models)
 - [OpenRouter family results](figures/openrouter/)
+- [Open source models](figures/opensource/) (open-weight models served via OpenRouter)
 
 ### Rebuild Figures
 
@@ -125,9 +134,10 @@ After adding new benchmark results, regenerate all graphs:
 ```bash
 # Regenerate all family-specific and combined graphs
 python compare_benchmark_results.py \
-  outputs/claude/claude-opus-4-7/20260417T182609Z \
-  outputs/claude/claude-sonnet-4-6/20260417T155306Z \
   outputs/claude/claude-haiku-4-5/20260417T155307Z \
+  outputs/claude/claude-sonnet-4-6/20260417T155306Z \
+  outputs/claude/claude-opus-4-7/20260417T182609Z \
+  outputs/claude/claude-opus-4-8/20260610T032654Z \
   outputs/openai/gpt-5-5/20260429T175554Z \
   outputs/openai/gpt-5.4/20260417T182903Z \
   outputs/openai/gpt-5-4-mini/20260420T152035Z \
@@ -137,13 +147,19 @@ python compare_benchmark_results.py \
   outputs/openrouter/deepseek-deepseek-v3-2/20260517T223356Z \
   outputs/openrouter/moonshotai-kimi-k2-5/20260517T223524Z \
   outputs/openrouter/z-ai-glm-5/20260517T223721Z \
+  outputs/openrouter/z-ai-glm-5-2/20260626T020503Z \
+  outputs/openrouter/moonshotai-kimi-k2-6/20260706T171452Z \
+  outputs/openrouter/deepseek-deepseek-v4-pro/20260706T164606Z \
+  outputs/openrouter/qwen-qwen3-6-max-preview/20260706T164607Z \
+  outputs/openrouter/nvidia-nemotron-3-ultra-550b-a55b/20260706T164608Z \
   --output-prefix figures/combined/benchmark_percentages
 
 # Family-specific (Claude)
 python compare_benchmark_results.py \
-  outputs/claude/claude-opus-4-7/20260417T182609Z \
-  outputs/claude/claude-sonnet-4-6/20260417T155306Z \
   outputs/claude/claude-haiku-4-5/20260417T155307Z \
+  outputs/claude/claude-sonnet-4-6/20260417T155306Z \
+  outputs/claude/claude-opus-4-7/20260417T182609Z \
+  outputs/claude/claude-opus-4-8/20260610T032654Z \
   --output-prefix figures/claude/benchmark_percentages
 
 # Family-specific (OpenAI)
@@ -167,7 +183,25 @@ python compare_benchmark_results.py \
   outputs/openrouter/deepseek-deepseek-v3-2/20260517T223356Z \
   outputs/openrouter/moonshotai-kimi-k2-5/20260517T223524Z \
   outputs/openrouter/z-ai-glm-5/20260517T223721Z \
+  outputs/openrouter/z-ai-glm-5-2/20260626T020503Z \
+  outputs/openrouter/moonshotai-kimi-k2-6/20260706T171452Z \
+  outputs/openrouter/deepseek-deepseek-v4-pro/20260706T164606Z \
+  outputs/openrouter/qwen-qwen3-6-max-preview/20260706T164607Z \
+  outputs/openrouter/nvidia-nemotron-3-ultra-550b-a55b/20260706T164608Z \
   --output-prefix figures/openrouter/benchmark_percentages
+
+# Open Source Models (open-weight models only)
+python compare_benchmark_results.py \
+  outputs/openrouter/google-gemma-4-31b-it-free/20260420T123900Z \
+  outputs/openrouter/deepseek-deepseek-v3-2/20260517T223356Z \
+  outputs/openrouter/deepseek-deepseek-v4-pro/20260706T164606Z \
+  outputs/openrouter/moonshotai-kimi-k2-5/20260517T223524Z \
+  outputs/openrouter/moonshotai-kimi-k2-6/20260706T171452Z \
+  outputs/openrouter/z-ai-glm-5/20260517T223721Z \
+  outputs/openrouter/z-ai-glm-5-2/20260626T020503Z \
+  outputs/openrouter/qwen-qwen3-6-max-preview/20260706T164607Z \
+  outputs/openrouter/nvidia-nemotron-3-ultra-550b-a55b/20260706T164608Z \
+  --output-prefix figures/opensource/benchmark_percentages
 ```
 
 ## Answer Key

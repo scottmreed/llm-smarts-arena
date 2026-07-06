@@ -1,0 +1,19 @@
+{
+  "elapsed_seconds": 26.2243,
+  "usage_totals": {
+    "input_tokens": 6590,
+    "output_tokens": 2543,
+    "cache_creation_input_tokens": 0,
+    "cache_read_input_tokens": 0
+  },
+  "total_tokens": 9133,
+  "usage_turns": [
+    {
+      "input_tokens": 6590,
+      "output_tokens": 2543,
+      "stop_reason": "end_turn",
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0
+    }
+  ]
+}
